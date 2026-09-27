@@ -1,0 +1,40 @@
+trigger:
+  branches:
+    include: [main]
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+strategy:
+  matrix:
+    shard_1: { SHARD: '1/4' }
+    shard_2: { SHARD: '2/4' }
+    shard_3: { SHARD: '3/4' }
+    shard_4: { SHARD: '4/4' }
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+
+  - script: npm ci
+    displayName: 'Install dependencies'
+
+  - script: npx playwright install --with-deps
+    displayName: 'Install browsers'
+
+  - script: npx playwright test --shard=$(SHARD)
+    displayName: 'Run Playwright tests (shard $(SHARD))'
+    continueOnError: true
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: 'blob-report'
+      artifact: 'blob-report-$(System.JobPositionInPhase)'
+    condition: always()
+    displayName: 'Publish blob report for this shard'
+
+# Separate merge stage (run after all shard jobs complete):
+#   - download all blob-report-* artifacts
+#   - npx playwright merge-reports --reporter html ./all-blob-reports
+#   - publish the merged HTML report as a single pipeline artifact

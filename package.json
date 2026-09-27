@@ -1,0 +1,21 @@
+{
+  "name": "advanced-playwright-training",
+  "version": "1.0.0",
+  "description": "Advanced Playwright + TypeScript reference framework",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test tests/ui",
+    "test:api": "playwright test tests/api",
+    "test:network": "playwright test tests/network",
+    "test:hybrid": "playwright test tests/hybrid",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0"
+  }
+}
